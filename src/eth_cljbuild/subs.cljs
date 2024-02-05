@@ -11,3 +11,13 @@
  ::count
  (fn [db]
    (:count db)))
+
+(re-frame/reg-sub
+ ::nodes
+ (fn [db]
+   (:nodes db)))
+
+(re-frame/reg-sub
+ ::edges
+ (fn [db]
+   (:edges db)))

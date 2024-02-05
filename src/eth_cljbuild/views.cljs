@@ -1,18 +1,8 @@
 (ns eth-cljbuild.views
   (:require
-   ["reactflow" :default react-flow]
-   [re-frame.core :as re-frame]
-   [reagent.core :as reagent]
-   [eth-cljbuild.subs :as subs]))
-
-(def ReactFlow (reagent/adapt-react-class react-flow))
-
-(defn flow-component
-  []
-  [:div
-      {:style {:width 500
-               :height 500}}
-      [(reagent/adapt-react-class react-flow)]])
+   [eth-cljbuild.components.flow-graph :refer [flow-component]]
+   [eth-cljbuild.subs :as subs]
+   [re-frame.core :as re-frame]))
 
 (defn greeting
   [name count]
@@ -20,12 +10,13 @@
 
 (defn main-panel []
   (let [name (re-frame/subscribe [::subs/name])
-        count (re-frame/subscribe [::subs/count])]
+        count (re-frame/subscribe [::subs/count])
+        nodes (re-frame/subscribe [::subs/nodes])
+        edges (re-frame/subscribe [::subs/edges])]
     [:div
      [:h1
       (greeting @name @count)]
      [:button
-      {:on-click #(re-frame.core/dispatch [:update-count (inc @count)])}
+      {:on-click #(re-frame.core/dispatch [:spawn-node (rand 500) (rand 500)])}
       "Increase count"]
-     [flow-component]
-     ]))
+     [flow-component @nodes @edges]]))
