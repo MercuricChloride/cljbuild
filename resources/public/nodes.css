@@ -1,6 +1,6 @@
 .base-node {
   display: flex;
-  padding: 5px;
+  /* padding: 5px; */
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -11,6 +11,14 @@
   border-radius: 5px;
   min-width: 150px;
   min-height: 50px;
+  /* min-width: 500px; */
+  /* min-height: 300px; */
+}
+
+.base-node iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .base-node label {
@@ -18,13 +26,6 @@
   color: black;
   font-size: 12px;
 }
-
-/* .base-node .node-inputs { */
-/*     display: flex; */
-/*     align-items: center; */
-/*     justify-content: space-between; */
-/*     min-height: 50px; */
-/* } */
 
 .input-handle .react-flow__handle {
   position: absolute;
@@ -40,9 +41,22 @@
   background-color: #333;
 }
 
-  /* height: 50px; */
-  /* min-width: 100px; */
-  /* border: 1px solid #eee; */
-  /* padding: 5px; */
-  /* border-radius: 5px; */
-  /* background: white; */
+.container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio (divide 9 by 16 = 0.5625) */
+}
+
+/* Then style the iframe to fit in the container div with full height and width */
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body, html {width: 100%; height: 100%; margin: 0; padding: 0}

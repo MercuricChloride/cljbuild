@@ -34,3 +34,20 @@
  :create-edge
  (fn [{:keys [db]} [_ params]]
    {:db (assoc db :edges (addEdge (clj->js params) (clj->js (:edges db))))}))
+
+(re-frame/reg-event-fx
+ :show-context-menu
+ (fn [{:keys [db]} [_ {:keys [pageX pageY]} {:keys [id data]}]]
+     {:db (assoc db :context-menu {:showing true
+                                   :node-id id
+                                   :x pageX
+                                   :y pageY
+                                   :properties (keys data)})}))
+(re-frame/reg-event-fx
+ :hide-context-menu
+ (fn [{:keys [db]} _]
+   {:db (assoc db :context-menu {:showing false}
+                            :node-id 0
+                            :x 0
+                            :y 0
+                            :properties [])}))

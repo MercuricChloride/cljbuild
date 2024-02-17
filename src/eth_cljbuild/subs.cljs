@@ -8,6 +8,11 @@
    (select-keys db [:nodes :edges :node-types])))
 
 (re-frame/reg-sub
+ ::context-menu-state
+ (fn [db _query-vector]
+   (get-in db [:context-menu])))
+
+(re-frame/reg-sub
  ::inputs
  (fn [db query-vector]
    42))

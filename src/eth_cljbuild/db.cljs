@@ -1,5 +1,5 @@
 (ns eth-cljbuild.db
-  (:require [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode]]))
+  (:require [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode IFrameNode]]))
 
 (defn -node
   ([label]
@@ -16,13 +16,11 @@
    {:id label
     :data {:label label
            :html "
-<html>
-  <body>
-    <h1 id=\"title\">Hello World!</h1>
-    <script src=\"/sample.js\">
-    </script>
-  </body>
-</html
+  <style>
+    body, html {width: 100%; height: 100%; margin: 0; padding: 0}
+  </style>
+    <iframe id=\"responsive-iframe\" height=\"100%\" width=\"100%\" src=\"https://www.youtube.com/embed/HKgSMTON4fI?si=K3omdo0kVaBf7Pqf\"></iframe>
+  <script src=\"/sample.js\" />
 "}
     :type type
     :position {:x x :y y}}))
@@ -36,9 +34,15 @@
                  :target "2"}])
 
 (defonce node-types
-  (clj->js {:adder AddNode}))
+  (clj->js {:adder AddNode
+            :iframe IFrameNode}))
 
 (defonce default-db
   {:nodes nodes
    :edges edges
-   :node-types node-types})
+   :node-types node-types
+   :context-menu {:showing? false
+                  :node-id 0
+                  :x 0
+                  :y 0
+                  :properties []}})

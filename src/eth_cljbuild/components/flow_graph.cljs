@@ -11,6 +11,25 @@
 (defonce nodeTypes (clj->js {:adder AddNode
                              :iframe IFrameNode}))
 
+(defn ContextMenu
+  []
+  (let [{:keys [showing x y properties node-id]} @(re-frame/subscribe [::subs/context-menu-state])]
+    (if showing
+      [:div
+       {:style {:position "absolute"
+                :top y
+                :left x
+                :z-index 1000}}
+       (str "Node: " node-id)
+       [:ul
+        (map (fn [property] [:li property]) properties)]])))
+
+    
+
+(defn onNodeContextMenu
+  [event node]
+  (js/console.log "Node context menu" event node))
+
 (defn flow-component
   []
   (let [{:keys [nodes edges]} @(re-frame/subscribe [::subs/graph-data])]
@@ -21,7 +40,11 @@
       {:nodes nodes
        :edges edges
        :nodeTypes nodeTypes
+       :onPaneClick #(re-frame.core/dispatch [:hide-context-menu %])
+       :onNodeContextMenu #(re-frame.core/dispatch [:show-context-menu % %])
        :onNodesChange #(re-frame.core/dispatch [:change-nodes %])
        :onEdgesChange #(re-frame.core/dispatch [:change-edges %])
-       :onConnect #(re-frame.core/dispatch [:create-edge %])}
-      [BG]]]))
+       :onConnect #(re-frame.core/dispatch [:create-edge %])
+       :onContextMenu (fn [e] (.preventDefault e))}
+      [BG]
+      [ContextMenu]]]))
