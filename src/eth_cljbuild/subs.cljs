@@ -3,21 +3,17 @@
    [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub
- ::name
- (fn [db]
-   (:name db)))
+ ::graph-data
+ (fn [db _query-vector]
+   (select-keys db [:nodes :edges :node-types])))
 
 (re-frame/reg-sub
- ::count
- (fn [db]
-   (:count db)))
+ ::inputs
+ (fn [db query-vector]
+   (println query-vector)
+   42))
 
 (re-frame/reg-sub
- ::nodes
- (fn [db]
-   (:nodes db)))
-
-(re-frame/reg-sub
- ::edges
- (fn [db]
-   (:edges db)))
+ ::node-types
+ (fn [db _query-vector]
+   (select-keys db [:node-types])))

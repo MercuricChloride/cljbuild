@@ -1,0 +1,34 @@
+.base-node {
+  display: flex; /* Remove quotes */
+  padding: 5px; /* No need for quotes, and it's duplicated */
+  flex-direction: column; /* Remove quotes */
+  align-items: center;
+  justify-content: center; /* Remove quotes */
+  width: 100%; /* Remove quotes */
+  height: 100%; /* Remove quotes */
+  background-color: white; /* Remove quotes */
+  border: 1px solid #000; /* Correct */
+  border-radius: 5px; /* Remove quotes */
+  min-width: 150px;
+  min-height: 50px;
+}
+
+.base-node label {
+  justify-self: start;
+  color: black;
+  font-size: 12px;
+}
+
+.base-node .node-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 50px;
+}
+
+  /* height: 50px; */
+  /* min-width: 100px; */
+  /* border: 1px solid #eee; */
+  /* padding: 5px; */
+  /* border-radius: 5px; */
+  /* background: white; */

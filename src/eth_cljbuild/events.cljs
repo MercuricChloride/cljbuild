@@ -20,7 +20,6 @@
                               :y y}}]
      {:db (assoc db :nodes (cons new-node nodes))})))
 
-
 (re-frame/reg-event-fx
  :change-nodes
  (fn [{:keys [db]} [_ changes]]

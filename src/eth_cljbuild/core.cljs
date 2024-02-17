@@ -4,8 +4,8 @@
    [re-frame.core :as re-frame]
    [eth-cljbuild.events :as events]
    [eth-cljbuild.views :as views]
-   [eth-cljbuild.config :as config]
-   ))
+   [eth-cljbuild.config :as config]))
+   
 
 
 (defn dev-setup []
