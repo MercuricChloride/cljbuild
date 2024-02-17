@@ -1,6 +1,6 @@
 (ns eth-cljbuild.components.flow-wrappers
   (:require
-    ["reactflow" :refer [Handle Position NodeResizer] :default react-flow]
+    ["reactflow" :refer [Handle Position NodeResizer NodeToolbar] :default react-flow]
     [reagent.core :as reagent]
     [cljs.spec.alpha :as s]))
 
@@ -11,6 +11,7 @@
 (def handle (reagent/adapt-react-class Handle))
 (def resizer (reagent/adapt-react-class NodeResizer))
 (def position (js->clj Position :keywordize-keys true))
+(def node-toolbar (reagent/adapt-react-class NodeToolbar))
 
 (s/def ::position
   #(#{:Left :Right :Top :Bottom} %))

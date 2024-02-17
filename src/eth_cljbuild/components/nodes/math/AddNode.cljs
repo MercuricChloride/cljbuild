@@ -1,14 +1,23 @@
 (ns eth-cljbuild.components.nodes.math.AddNode
   (:require
-   [eth-cljbuild.components.flow-wrappers :refer [input output resizer]])
+   [eth-cljbuild.components.flow-wrappers :refer [input node-toolbar output
+                                                  resizer]]
+   [re-frame.core :refer [dispatch]])
   (:require-macros
    [eth-cljbuild.macros :refer [def-element]]))
 
 (defn BaseNode
-  ([title inputs outputs]
-   (BaseNode title "" inputs outputs))
-  ([title body inputs outputs]
+  ([id title inputs outputs]
+   (BaseNode id title "" inputs outputs))
+  ([id title body inputs outputs]
    [:div.base-node
+     [node-toolbar
+      [:button {:onClick (fn [e]
+                           (js/console.log e id)
+                           (dispatch [:delete-node id]))}
+               "delete"]
+      [:button "copy"]
+      [:button "expand"]]
      [resizer {:height "500px" :width "500px"}]
      title
      body
@@ -18,18 +27,20 @@
 (def-element
   AddNode
   {:keys [id data]}
-  [BaseNode "AddNode" [[input :Left "a"]
-                       [input :Left "b"]]
+  [BaseNode id "AddNode" [[input :Left "a"]
+                          [input :Left "b"]]
                       [[output :Right "a"]]])
 (def-element
   IFrameNode
   {:keys [id data]}
-  (let [{:keys [html label]} data]
+  (let [{:keys [html label]} data
+        !iframe (atom nil)]
     [BaseNode
+     id
      label
      [:iframe {:srcDoc html
                :style {:width "100%"
-                       :height "100%"}}]
-
-     []
-     []]))
+                       :height "100%"}
+               :ref (fn [el] (reset! !iframe el))}]
+     [[input :Left "a"]]
+     [[output :Right "a"]]]))

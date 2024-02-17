@@ -29,9 +29,10 @@
                 (-node "2" 100 100)
                 (-node "3" 200 200 :iframe)])
 
-(defonce edges [{:id "1-2"
-                 :source "1"
-                 :target "2"}])
+(defonce edges []) ;; [{:id "1-2"
+                   ;;   :source "1"
+                   ;;   :target "2"}]
+
 
 (defonce node-types
   (clj->js {:adder AddNode
