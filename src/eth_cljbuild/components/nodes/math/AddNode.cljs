@@ -6,15 +6,23 @@
    [eth-cljbuild.macros :refer [def-element]]))
 
 (defn BaseNode
-  [title [& inputs] [& outputs]]
+  [title inputs outputs]
   [:div.base-node
     [:label title]
-    [:div.node-inputs inputs]
-    [:div.base-node-ouputs outputs]])
+    [:div.node-inputs (map-indexed #(with-meta %2 {:key %1}) inputs)]
+    [:div.base-node-ouputs (map-indexed #(with-meta %2 {:key %1}) outputs)]])
 
 (def-element
   AddNode
-  [{:keys [id data]}]
-  [BaseNode "AddNode" [[input {:key "a"} "a"]
-                       [input {:key "b"} "b"]]
-                      [[output {:key "a"} "a"]]])
+  {:keys [id data]}
+  [BaseNode "AddNode" [[input :Left "a"]
+                       [input :Left "b"]]
+                      [[output :Right "a"]]])
+(def-element
+  IFrameNode
+  {:keys [id data]}
+  (let [html (get data :html)]
+    [BaseNode [:iframe {:srcDoc html}]
+              [[input :Left "a"]
+               [input :Left "b"]]
+              [[output :Right "a"]]]))

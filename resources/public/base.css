@@ -113,6 +113,7 @@
     cursor: -webkit-grabbing;
     cursor: grabbing;
   }
+
 .react-flow__nodesselection {
   z-index: 3;
   transform-origin: left top;

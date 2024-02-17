@@ -11,10 +11,25 @@
    {:id label
     :data {:label label}
     :type "adder"
+    :position {:x x :y y}})
+  ([label x y type]
+   {:id label
+    :data {:label label
+           :html "
+<html>
+  <body>
+    <h1 id=\"title\">Hello World!</h1>
+    <script src=\"/sample.js\">
+    </script>
+  </body>
+</html
+"}
+    :type type
     :position {:x x :y y}}))
 
 (defonce nodes [(-node "1")
-                (-node "2" 100 100)])
+                (-node "2" 100 100)
+                (-node "3" 200 200 :iframe)])
 
 (defonce edges [{:id "1-2"
                  :source "1"

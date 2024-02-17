@@ -10,7 +10,6 @@
 (re-frame/reg-sub
  ::inputs
  (fn [db query-vector]
-   (println query-vector)
    42))
 
 (re-frame/reg-sub

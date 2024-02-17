@@ -1,19 +1,19 @@
 (ns eth-cljbuild.components.flow-graph
   (:require
    ["reactflow" :refer [Background] :default react-flow]
-   [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode]]
+   [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode IFrameNode]]
    [eth-cljbuild.subs :as subs]
    [re-frame.core :as re-frame]
    [reagent.core :as reagent]))
 
 (defonce ReactFlow (reagent/adapt-react-class react-flow))
 (defonce BG (reagent/adapt-react-class Background))
-(def nodeTypes (clj->js {:adder AddNode}))
+(defonce nodeTypes (clj->js {:adder AddNode
+                             :iframe IFrameNode}))
 
 (defn flow-component
   []
-  (let [{:keys [nodes edges]} @(re-frame/subscribe [::subs/graph-data])
-        _ @(re-frame/subscribe [::subs/inputs])]
+  (let [{:keys [nodes edges]} @(re-frame/subscribe [::subs/graph-data])]
     [:div
      {:style {:width "100vw"
               :height "100vh"}}

@@ -10,6 +10,6 @@
   [name props & body]
   `(cljs.core/defn ~name
      [~'p]
-     (let [~'props (cljs.core/js->clj ~'p ~':keywordize-keys true)]
+     (let [~props (~'cljs.core/js->clj ~'p ~':keywordize-keys true)]
        (~'reagent.core/as-element
          ~@body))))

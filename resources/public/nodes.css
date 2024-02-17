@@ -1,14 +1,14 @@
 .base-node {
-  display: flex; /* Remove quotes */
-  padding: 5px; /* No need for quotes, and it's duplicated */
-  flex-direction: column; /* Remove quotes */
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
   align-items: center;
-  justify-content: center; /* Remove quotes */
-  width: 100%; /* Remove quotes */
+  justify-content: center;
+  width: 100%;
   height: 100%; /* Remove quotes */
-  background-color: white; /* Remove quotes */
-  border: 1px solid #000; /* Correct */
-  border-radius: 5px; /* Remove quotes */
+  background-color: white;
+  border: 1px solid #000;
+  border-radius: 5px;
   min-width: 150px;
   min-height: 50px;
 }
@@ -19,11 +19,25 @@
   font-size: 12px;
 }
 
-.base-node .node-inputs {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 50px;
+/* .base-node .node-inputs { */
+/*     display: flex; */
+/*     align-items: center; */
+/*     justify-content: space-between; */
+/*     min-height: 50px; */
+/* } */
+
+.input-handle .react-flow__handle {
+  position: absolute;
+  min-width: 10px;
+  min-height: 10px;
+  background-color: #333;
+}
+
+.output-handle .react-flow__handle {
+  position: absolute;
+  min-width: 10px;
+  min-height: 10px;
+  background-color: #333;
 }
 
   /* height: 50px; */
