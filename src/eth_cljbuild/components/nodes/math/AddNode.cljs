@@ -16,7 +16,9 @@
                            (js/console.log e id)
                            (dispatch [:delete-node id]))}
                "delete"]
-      [:button "copy"]
+      [:button {:onClick (fn [e]
+                           (js/console.log e id)
+                           (dispatch [:copy-node id]))} "copy"]
       [:button "expand"]]
      [resizer {:height "500px" :width "500px"}]
      title

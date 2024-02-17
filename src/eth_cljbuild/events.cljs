@@ -1,8 +1,9 @@
 (ns eth-cljbuild.events
   (:require
-   [re-frame.core :refer [reg-event-fx reg-event-db]]
+   ["reactflow" :refer [addEdge applyEdgeChanges applyNodeChanges]]
    [eth-cljbuild.db :as db]
-   ["reactflow" :refer [applyNodeChanges applyEdgeChanges addEdge]]))
+   [eth-cljbuild.utils :refer [->clj ->js find-in]]
+   [re-frame.core :refer [reg-event-db reg-event-fx]]))
    
 
 (reg-event-db
@@ -23,28 +24,28 @@
 
 (defn delete-node
   [nodes node-id]
-  (clj->js (filter (fn [node]
-                       (let [node (js->clj node :keywordize-keys true)]
+  (->js (filter (fn [node]
+                    (let [node (->clj node)]
+                     (not= (:id node) node-id)))
+                nodes)))
+
+(defn copy-node
+  [nodes node-id]
+  (let [node (find-in (fn [node]
+                       (let [node (->clj node)]
                          (not= (:id node) node-id)))
-                   nodes)))
-
-(defmulti node-toolbar-action
-  (fn [db [action node-id]] action))
-
-(defmethod node-toolbar-action :delete
-  [db [_ node-id]]
-  {:db (assoc db :nodes (delete-node (:nodes db) node-id))})
-
-;; (defmethod node-toolbar-action :copy
-;;   [cofx [_action node-id]]
-;;   (fn [{:keys [db]} [_ action node-id]]
-;;     {:db (assoc db :nodes (remove #(= (:id %) node-id) (:nodes db)))}))
+                   nodes)]
+    (->js (conj (->clj nodes) (assoc (->clj node) :id (str (random-uuid)))))))
 
 (reg-event-fx
  :delete-node
  (fn [{:keys [db]} [_ node-id]]
    {:db (assoc db :nodes (delete-node (:nodes db) node-id))}))
 
+(reg-event-fx
+ :copy-node
+ (fn [{:keys [db]} [_ node-id]]
+   {:db (assoc db :nodes (copy-node (:nodes db) node-id))}))
 
 (reg-event-fx
  :change-nodes
@@ -54,13 +55,13 @@
 (reg-event-fx
  :change-edges
  (fn [{:keys [db]} [_ changes]]
-   {:db (assoc db :edges (applyEdgeChanges (clj->js changes) (clj->js (:edges db)))
+   {:db (assoc db :edges (applyEdgeChanges (->js changes) (->js (:edges db)))
                   :edge-changes changes)}))
 
 (reg-event-fx
  :create-edge
  (fn [{:keys [db]} [_ params]]
-   {:db (assoc db :edges (addEdge (clj->js params) (clj->js (:edges db))))}))
+   {:db (assoc db :edges (addEdge (->js params) (->js (:edges db))))}))
 
 (reg-event-fx
  :show-context-menu
