@@ -5,15 +5,18 @@
   [re-frame.core :refer [dispatch subscribe]]))
 
 (defn editor-item
- [node-id item]
- (let [handleChange (fn [e]
+ [node-id k v]
+ (let [text-ref (atom nil)
+       handleChange (fn [e]
                       (let [value (.-value (.-target e))]
-                        (dispatch [:change-property node-id item value])))
-       item-string (str item)]
+                        (reset! text-ref value)))
+       item-string (str (key->js k))]
       [:div.editor-item
         [:span
           [:p "Property: " item-string]
-          [:input {:type "text" :onChange handleChange}]]]))
+          [:textarea {:onChange handleChange}
+           v]]
+        [:button {:onClick #(dispatch [:change-property node-id k @text-ref])} "Update"]]))
                    
 
 (defn editor-panel
@@ -23,7 +26,7 @@
    [:h1 "Editor"]
    [:div.editor-content]
    [:ul.editor-list
-    (map (fn [p] [editor-item node-id p]) properties)]])
+    (map-indexed (fn [i [key value]] ^{:key i} [editor-item node-id key value]) properties)]])
 
 (defn main-panel
  []

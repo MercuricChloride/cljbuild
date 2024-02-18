@@ -50,6 +50,22 @@
           {:dispatch [:change-nodes [(create-node copied-node)]]})))
 
 (reg-event-fx
+ :change-property
+ (fn [{:keys [db]} [_ node-id property value]]
+     (let [nodes (:nodes db)
+           new-nodes (map (fn [node]
+                            (if (= (.-id node) node-id)
+                              (let [node (->clj node)
+                                    node-data (:data node)]
+                                (js/console.log node-data)
+                                (->js (assoc node
+                                             :data (->js (assoc node-data
+                                                               property value)))))
+                              node))
+                          nodes)]
+          {:db (assoc db :nodes (->js new-nodes))})))
+
+(reg-event-fx
  :change-nodes
  (fn [{:keys [db]} [_ changes]]
      {:db (assoc db :nodes (applyNodeChanges (->js changes) (->js (:nodes db))))}))
@@ -68,8 +84,7 @@
 (reg-event-fx
  :edit-node
  (fn [{:keys [db]} [_ node-id]]
-   (let [properties (keys (->clj (.-data (find-in #(= (.-id  %) node-id) (:nodes db)))))]
-     (js/console.log properties)
+   (let [properties (->clj (.-data (find-in #(= (.-id  %) node-id) (:nodes db))))]
      {:db (assoc db :editor-panel {:showing? true
                                    :node-id node-id
                                    :properties properties})})))
@@ -83,7 +98,7 @@
                                       :node-id id
                                       :x clientX
                                       :y clientY
-                                      :properties (keys data)})})))
+                                      :properties data})})))
 (reg-event-fx
  :hide-context-menu
  (fn [{:keys [db]} _]

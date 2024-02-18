@@ -25,9 +25,9 @@
 (def-element
   AddNode
   {:keys [id data]}
-  [BaseNode id "AddNode" [[input :Left "a"]
-                          [input :Left "b"]]
-                      [[output :Right "a"]]])
+  [BaseNode id (:label data)  [[input :Left "a"]
+                               [input :Left "b"]]
+                              [[output :Right "a"]]])
 (def-element
   IFrameNode
   {:keys [id data]}
