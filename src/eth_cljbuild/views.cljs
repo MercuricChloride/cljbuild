@@ -12,21 +12,23 @@
                         (reset! text-ref value)))
        item-string (str (key->js k))]
       [:div.editor-item
-        [:span
-          [:p "Property: " item-string]
-          [:textarea {:onChange handleChange}
-           v]]
-        [:button {:onClick #(dispatch [:change-property node-id k @text-ref])} "Update"]]))
+        [:h2 item-string]
+        [:textarea {:onChange handleChange
+                    :cols 80
+                    :rows 10
+                    :defaultValue v}]
+          
+        [:button {:onClick #(dispatch [:change-property node-id k @text-ref])} (str "Update " item-string)]]))
                    
 
 (defn editor-panel
  [node-id properties]
  [:div.editor-container
-   [:div.editor-header]
-   [:h1 "Editor"]
-   [:div.editor-content]
-   [:ul.editor-list
-    (map-indexed (fn [i [key value]] ^{:key i} [editor-item node-id key value]) properties)]])
+   [:div.editor-header
+    [:h1 (str "Editor for node: " node-id)]]
+   [:div.editor-content
+    [:ul.editor-list
+     (map-indexed (fn [i [key value]] ^{:key i} [editor-item node-id key value]) properties)]]])
 
 (defn main-panel
  []

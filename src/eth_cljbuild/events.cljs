@@ -57,7 +57,6 @@
                             (if (= (.-id node) node-id)
                               (let [node (->clj node)
                                     node-data (:data node)]
-                                (js/console.log node-data)
                                 (->js (assoc node
                                              :data (->js (assoc node-data
                                                                property value)))))

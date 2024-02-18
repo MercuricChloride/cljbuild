@@ -17,7 +17,7 @@
       [:button {:onClick #(dispatch [:copy-node id])} "copy"]
       [:button {:onClick #(dispatch [:edit-node id])} "edit"]]
      [resizer {:height "500px" :width "500px"}]
-     title
+     [:div.title title]
      body
      [:div.node-inputs (map-indexed #(with-meta %2 {:key %1}) inputs)]
      [:div.base-node-ouputs (map-indexed #(with-meta %2 {:key %1}) outputs)]]))
@@ -28,15 +28,27 @@
   [BaseNode id (:label data)  [[input :Left "a"]
                                [input :Left "b"]]
                               [[output :Right "a"]]])
+
+(defn format-html
+  [{:keys [html css js]}]
+  (str
+   (str "<style>" css "</style>")
+   html
+   (str "<script>" js "</script>")))
+
+(format-html {:html "<h1>HI</h1>"
+              :css ""
+              :js "console.log('hi')"})
+
 (def-element
   IFrameNode
   {:keys [id data]}
-  (let [{:keys [html label]} data
+  (let [{:keys [label]} data
         !iframe (atom nil)]
     [BaseNode
      id
      label
-     [:iframe {:srcDoc html
+     [:iframe {:srcDoc (format-html data)
                :style {:width "100%"
                        :height "100%"}
                :ref (fn [el] (reset! !iframe el))}]
