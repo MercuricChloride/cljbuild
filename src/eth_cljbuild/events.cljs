@@ -2,6 +2,7 @@
   (:require
    ["reactflow" :refer [addEdge applyEdgeChanges applyNodeChanges]]
    [eth-cljbuild.db :as db]
+   [eth-cljbuild.event-helpers.node-changes :refer [remove-node create-node]]
    [eth-cljbuild.utils :refer [->clj ->js find-in]]
    [re-frame.core :refer [reg-event-db reg-event-fx]]))
    
@@ -31,26 +32,27 @@
 
 (defn copy-node
   [nodes node-id]
-  (let [node (find-in (fn [node]
-                       (let [node (->clj node)]
-                         (not= (:id node) node-id)))
-                   nodes)]
-    (->js (conj (->clj nodes) (assoc (->clj node) :id (str (random-uuid)))))))
+  (let [node (find-in #(= (:id (->clj %)) node-id) nodes)
+        node (assoc (->clj node) :id (str (random-uuid))
+                                 :x (+ 20 (:x node))
+                                 :y (+ 20 (:y node)))]
+      node))
 
 (reg-event-fx
- :delete-node
- (fn [{:keys [db]} [_ node-id]]
-   {:db (assoc db :nodes (delete-node (:nodes db) node-id))}))
+ :remove-node
+ (fn [_ [_ node-id]]
+     {:dispatch [:change-nodes [(remove-node node-id)]]}))
 
 (reg-event-fx
  :copy-node
  (fn [{:keys [db]} [_ node-id]]
-   {:db (assoc db :nodes (copy-node (:nodes db) node-id))}))
+     (let [copied-node (copy-node (:nodes db) node-id)]
+          {:dispatch [:change-nodes [(create-node copied-node)]]})))
 
 (reg-event-fx
  :change-nodes
  (fn [{:keys [db]} [_ changes]]
-     {:db (assoc db :nodes (applyNodeChanges (clj->js changes) (clj->js (:nodes db))))}))
+     {:db (assoc db :nodes (applyNodeChanges (->js changes) (->js (:nodes db))))}))
 
 (reg-event-fx
  :change-edges
@@ -62,6 +64,15 @@
  :create-edge
  (fn [{:keys [db]} [_ params]]
    {:db (assoc db :edges (addEdge (->js params) (->js (:edges db))))}))
+
+(reg-event-fx
+ :edit-node
+ (fn [{:keys [db]} [_ node-id]]
+   (let [properties (keys (->clj (.-data (find-in #(= (.-id  %) node-id) (:nodes db)))))]
+     (js/console.log properties)
+     {:db (assoc db :editor-panel {:showing? true
+                                   :node-id node-id
+                                   :properties properties})})))
 
 (reg-event-fx
  :show-context-menu
@@ -80,4 +91,7 @@
                                  :node-id 0
                                  :x 0
                                  :y 0
-                                 :properties []})}))
+                                 :properties []}
+                   :editor-panel {:showing false
+                                  :node-id 0
+                                  :properties []})}))

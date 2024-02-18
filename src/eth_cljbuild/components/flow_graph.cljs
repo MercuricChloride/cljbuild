@@ -3,6 +3,7 @@
    ["reactflow" :refer [Background Panel] :default react-flow]
    [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode IFrameNode]]
    [eth-cljbuild.subs :as subs]
+   [eth-cljbuild.utils :refer [->clj]]
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [reagent.core :as reagent]))
 
@@ -27,19 +28,16 @@
 (defn flow-component
   []
   (let [{:keys [nodes edges]} @(subscribe [::subs/graph-data])]
-    [:div
-     {:style {:width "100vw"
-              :height "100vh"}}
-     [ReactFlow
-      {:nodes nodes
-       :edges edges
-       :nodeTypes nodeTypes
-       :onPaneClick #(dispatch [:hide-context-menu %])
-       :onNodeContextMenu (fn [event node]
-                            (dispatch [:show-context-menu (js->clj event :keywordize-keys true) (js->clj node :keywordize-keys true)]))
-       :onNodesChange #(dispatch [:change-nodes %])
-       :onEdgesChange #(dispatch [:change-edges %])
-       :onConnect #(dispatch [:create-edge %])
-       :onContextMenu (fn [e] (.preventDefault e))}
-      [RFBackground]
-      [ContextMenu]]]))
+    [ReactFlow
+     {:nodes nodes
+      :edges edges
+      :nodeTypes nodeTypes
+      :onPaneClick #(dispatch [:hide-context-menu %])
+      :onNodeContextMenu (fn [event node]
+                             (dispatch [:show-context-menu (->clj event) (->clj node)]))
+      :onNodesChange #(dispatch [:change-nodes %])
+      :onEdgesChange #(dispatch [:change-edges %])
+      :onConnect #(dispatch [:create-edge %])
+      :onContextMenu (fn [e] (.preventDefault e))}
+     [RFBackground]
+     [ContextMenu]]))

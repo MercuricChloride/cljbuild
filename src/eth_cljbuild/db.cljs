@@ -21,7 +21,7 @@
   </style>
     <iframe id=\"responsive-iframe\" height=\"100%\" width=\"100%\" src=\"https://www.youtube.com/embed/HKgSMTON4fI?si=K3omdo0kVaBf7Pqf\"></iframe>
   <script src=\"/sample.js\" />
-"}
+            "}
     :type type
     :position {:x x :y y}}))
 
@@ -33,7 +33,6 @@
                    ;;   :source "1"
                    ;;   :target "2"}]
 
-
 (defonce node-types
   (clj->js {:adder AddNode
             :iframe IFrameNode}))
@@ -42,6 +41,9 @@
   {:nodes nodes
    :edges edges
    :node-types node-types
+   :editor-panel {:showing? false
+                  :node-id 0
+                  :properties []}
    :context-menu {:showing? false
                   :node-id 0
                   :x 0

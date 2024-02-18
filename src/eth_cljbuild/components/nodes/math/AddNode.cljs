@@ -2,6 +2,7 @@
   (:require
    [eth-cljbuild.components.flow-wrappers :refer [input node-toolbar output
                                                   resizer]]
+   [eth-cljbuild.event-helpers.node-changes :refer [remove-node]]
    [re-frame.core :refer [dispatch]])
   (:require-macros
    [eth-cljbuild.macros :refer [def-element]]))
@@ -12,14 +13,9 @@
   ([id title body inputs outputs]
    [:div.base-node
      [node-toolbar
-      [:button {:onClick (fn [e]
-                           (js/console.log e id)
-                           (dispatch [:delete-node id]))}
-               "delete"]
-      [:button {:onClick (fn [e]
-                           (js/console.log e id)
-                           (dispatch [:copy-node id]))} "copy"]
-      [:button "expand"]]
+      [:button {:onClick #(dispatch [:remove-node id])} "delete"]
+      [:button {:onClick #(dispatch [:copy-node id])} "copy"]
+      [:button {:onClick #(dispatch [:edit-node id])} "edit"]]
      [resizer {:height "500px" :width "500px"}]
      title
      body
