@@ -17,23 +17,22 @@
                     :cols 80
                     :rows 10
                     :defaultValue v}]
-          
+
         [:button {:onClick #(dispatch [:change-property node-id k @text-ref])} (str "Update " item-string)]]))
-                   
 
 (defn editor-panel
- [node-id properties]
+ [showing? node-id properties]
  [:div.editor-container
-   [:div.editor-header
-    [:h1 (str "Editor for node: " node-id)]]
-   [:div.editor-content
-    [:ul.editor-list
-     (map-indexed (fn [i [key value]] ^{:key i} [editor-item node-id key value]) properties)]]])
+  {:style {:display (if showing? "block" "none")}}
+  [:div.editor-header
+   [:h1 (str "Editor for node: " node-id)]]
+  [:div.editor-content
+   [:ul.editor-list
+    (map-indexed (fn [i [key value]] ^{:key i} [editor-item node-id key value]) properties)]]])
 
 (defn main-panel
  []
  (let [{:keys [node-id showing? properties]} @(subscribe [::subs/editor-panel-state])]
    [:div.main-panel
-    (when showing?
-      [editor-panel node-id properties])
+    [editor-panel showing? node-id properties]
     [flow-component]]))

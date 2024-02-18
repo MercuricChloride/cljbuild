@@ -8,6 +8,11 @@
   (select-keys db [:nodes :edges])))
 
 (reg-sub
+ ::rf-instance
+ (fn [db _query-vector]
+  (:rf-instance db)))
+
+(reg-sub
  ::context-menu-state
  (fn [db _query-vector]
    (get-in db [:context-menu])))

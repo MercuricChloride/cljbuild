@@ -12,6 +12,28 @@
  (fn [_ _]
    db/default-db))
 
+
+(defonce save-key "eth-cljbuild-graph-state")
+
+(reg-event-fx
+ :set-rf-instance
+ (fn [{:keys [db]} [_ instance]]
+   {:db (assoc db :rf-instance instance)}))
+
+(reg-event-fx
+ :set-graph-state
+ (fn [{:keys [db]} [_ instance-value]]
+     (let [state-json (.stringify js/JSON (.toObject instance-value))
+           key save-key]
+      (.setItem js/localStorage key state-json)
+      {:db (assoc db :graph-state state-json)})))
+
+(reg-event-fx
+ :load-graph-state
+ (fn [{:keys [db]} [_]]
+   (let [{:keys [nodes edges]} (->clj (.parse js/JSON (.getItem js/localStorage save-key)))]
+        {:db (assoc db :nodes nodes :edges edges)})))
+
 (reg-event-fx
  :spawn-node
  (fn [{:keys [db]} [_ x y]]
@@ -93,19 +115,18 @@
  (fn [{:keys [db]} [_ event node]]
      (let [{:keys [clientX clientY]} event
            {:keys [id data]} node]
-       {:db (assoc db :context-menu {:showing true
+       {:db (assoc db :context-menu {:showing? true
                                       :node-id id
                                       :x clientX
                                       :y clientY
                                       :properties data})})))
+
 (reg-event-fx
  :hide-context-menu
  (fn [{:keys [db]} _]
-   {:db (assoc db :context-menu {:showing false
+   {:db (assoc db :context-menu {:showing? false
                                  :node-id 0
                                  :x 0
                                  :y 0
                                  :properties []}
-                   :editor-panel {:showing false
-                                  :node-id 0
-                                  :properties []})}))
+                  :editor-panel (assoc (:editor-panel db) :showing? false))}))

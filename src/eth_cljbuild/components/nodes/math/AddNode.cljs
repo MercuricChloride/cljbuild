@@ -36,10 +36,6 @@
    html
    (str "<script>" js "</script>")))
 
-(format-html {:html "<h1>HI</h1>"
-              :css ""
-              :js "console.log('hi')"})
-
 (def-element
   IFrameNode
   {:keys [id data]}
