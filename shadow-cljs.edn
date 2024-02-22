@@ -27,4 +27,4 @@
    :dev
    {:compiler-options
     {:closure-defines
-     { }}}}}}
+     {}}}}}}

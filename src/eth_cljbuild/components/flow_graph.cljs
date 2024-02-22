@@ -1,9 +1,10 @@
 (ns eth-cljbuild.components.flow-graph
   (:require
    ["reactflow" :refer [Background Panel] :default react-flow]
+   [eth-cljbuild.components.ant-wrappers :refer [Button Collapse]]
    [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode IFrameNode]]
    [eth-cljbuild.subs :as subs]
-   [eth-cljbuild.utils :refer [->clj ->js]]
+   [eth-cljbuild.utils :refer [->clj]]
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
    [reagent.core :as reagent]))
 
@@ -15,10 +16,11 @@
 
 (defn ControlPanel
   []
-  (let [instance @(subscribe [::subs/rf-instance])]
+  (let [instance @(subscribe [::subs/rf-instance])
+        set-viewport #(.setViewport instance %)]
     [RFPanel
-     [:button {:onClick #(dispatch [:set-graph-state instance])} "Save State"]
-     [:button {:onClick #(dispatch [:load-graph-state])} "Load State"]]))
+     [Button {:onClick #(dispatch [:set-graph-state instance])} "Save State"]
+     [Button {:onClick #(dispatch [:load-graph-state set-viewport])} "Load State"]]))
 
 (defn ContextMenu
   []
@@ -29,13 +31,10 @@
                 :left x
                 :z-index 1000}}
        (str "Node: " node-id)
-       [:ul
-        (map-indexed (fn [index property] ^{:key index} [:li property]) properties)]])))
-
-(defn onInit
-  [instance! value]
-  (reset! instance! value)
-  (js/console.log (.toObject value)))
+       [Collapse
+        {:items (map-indexed (fn [index property] {:key index
+                                                   :label property
+                                                   :children [:input property]}) properties)}]])))
 
 (defn flow-component
   []
@@ -52,6 +51,8 @@
       :onConnect #(dispatch [:create-edge %])
       :onContextMenu (fn [e] (.preventDefault e))
       :onInit #(dispatch [:set-rf-instance %])}
-     [RFBackground]
-     [ControlPanel]
+     [RFBackground
+      {:color "#000000"}]
+       ;:variant "lines"}]
+     ;;[ControlPanel]
      [ContextMenu]]))

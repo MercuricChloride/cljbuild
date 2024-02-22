@@ -15,6 +15,9 @@
 
 (defonce save-key "eth-cljbuild-graph-state")
 
+
+;; EVENTS FOR SAVING AND LOADING GRAPH STATE
+
 (reg-event-fx
  :set-rf-instance
  (fn [{:keys [db]} [_ instance]]
@@ -25,25 +28,16 @@
  (fn [{:keys [db]} [_ instance-value]]
      (let [state-json (.stringify js/JSON (.toObject instance-value))
            key save-key]
-      (.setItem js/localStorage key state-json)
-      {:db (assoc db :graph-state state-json)})))
+      (.setItem js/localStorage key state-json))))
 
 (reg-event-fx
  :load-graph-state
- (fn [{:keys [db]} [_]]
-   (let [{:keys [nodes edges]} (->clj (.parse js/JSON (.getItem js/localStorage save-key)))]
+ (fn [{:keys [db]} [_ set-viewport]]
+   (let [{:keys [nodes edges viewport]} (->clj (.parse js/JSON (.getItem js/localStorage save-key)))]
+        (set-viewport viewport)
         {:db (assoc db :nodes nodes :edges edges)})))
 
-(reg-event-fx
- :spawn-node
- (fn [{:keys [db]} [_ x y]]
-   (let [nodes (:nodes db)
-         id (str (count nodes))
-         new-node {:id id
-                   :data {:label id}
-                   :position {:x x
-                              :y y}}]
-     {:db (assoc db :nodes (cons new-node nodes))})))
+;; EVENTS FOR CREATING AND MANAGING NODES AND THEIR PROPERTIES
 
 (defn delete-node
   [nodes node-id]

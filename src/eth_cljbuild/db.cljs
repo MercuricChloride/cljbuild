@@ -37,7 +37,6 @@
   {:nodes nodes
    :edges edges
    :node-types node-types
-   :graph-state "" ;; JSON representation of the graph state
    :rf-instance {} ;; the current react-flow-instance
    :editor-panel {:showing? false
                   :node-id 0
