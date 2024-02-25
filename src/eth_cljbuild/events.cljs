@@ -89,15 +89,9 @@
                               (let [assoc-value (assoc-in node
                                                  [:data :output-map (str handle-id)]
                                                  value)]
-                                (println "ASSOC VALUE: " assoc-value)
-                                (js/console.log "ASSOC VALUE: " (->js assoc-value))
                                 assoc-value)
-                                ;; (set! (.. node -data -output-map)
-                                ;;       (->js (assoc (->clj output-map)
-                                ;;                    handle-id value)))
                               node))
                           nodes)]
-          (js/console.log "NEW-NODES" (->js new-nodes))
           {:db (assoc db :nodes (->js new-nodes))})))
 
 (reg-event-fx

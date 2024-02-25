@@ -5,23 +5,24 @@
    {:id label
     :data {:label label
            :input-count 2
-           :output-count 1}
+           :output-count 1
+           :output-map {}
+           :cljs "(let [[a b] inputs] (+ a b))"}
     :type "adder"
     :position {:x 0 :y 0}})
   ([label x y]
    {:id label
     :data {:label label
            :input-count 2
-           :output-count 1}
+           :output-count 1
+           :output-map {}
+           :cljs "(let [[a b] inputs] (+ a b))"}
     :type "adder"
     :position {:x x :y y}})
   ([label x y type]
    {:id label
     :data {:label label
-           :css "body, html {width: 100%; height: 100%; margin: 0; padding: 0}"
-           :js ""
-           :html "<iframe id=\"responsive-iframe\" height=\"100%\" width=\"100%\" src=\"https://www.youtube.com/embed/HKgSMTON4fI?si=K3omdo0kVaBf7Pqf\">\n</iframe>"
-           :cljs-script ""
+           :cljs ""
            :input-count 2
            :output-count 1
            :output-map {}}

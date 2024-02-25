@@ -51,11 +51,8 @@
   "Finds a node matching `node-id` and returns the value of the output port `handle-id`"
   [nodes node-id handle-id]
   (let [node (->clj (find-in #(= (.-id %) node-id) nodes))
-        data (:data node)]
-    (println "DATA: " (:output-map data))
-    (if-some [output-map (:output-map data)]
-             ((keyword handle-id) output-map)
-             nil)))
+        output-map (get-in node [:data :output-map (keyword handle-id)])]
+    output-map))
 
 ;; NOTE I think we really only care about the incoming values
 (reg-sub
