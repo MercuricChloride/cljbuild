@@ -12,3 +12,5 @@
 (def Card (adapt-react-class ant/Card))
 (def Tooltip (adapt-react-class ant/Tooltip))
 (def Collapse (adapt-react-class ant/Collapse))
+(def Input (adapt-react-class ant/Input))
+(def TextArea (adapt-react-class (.-TextArea ant/Input)))

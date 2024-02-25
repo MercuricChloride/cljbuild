@@ -2,17 +2,22 @@
   (:require
    ["reactflow" :refer [Background Panel] :default react-flow]
    [eth-cljbuild.components.ant-wrappers :refer [Button Collapse]]
-   [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode IFrameNode]]
+   [eth-cljbuild.components.nodes.iframe-node :refer [IFrameNode]]
+   [eth-cljbuild.components.nodes.math.AddNode :refer [AddNode NumberNode]]
    [eth-cljbuild.subs :as subs]
-   [eth-cljbuild.utils :refer [->clj]]
    [re-frame.core :as re-frame :refer [dispatch subscribe]]
-   [reagent.core :as reagent]))
+   [reagent.core :as reagent]
+   [reagent.core :as r]))
 
 (defonce ReactFlow (reagent/adapt-react-class react-flow))
 (defonce RFBackground (reagent/adapt-react-class Background))
 (defonce RFPanel (reagent/adapt-react-class Panel))
-(defonce nodeTypes (clj->js {:adder AddNode
-                             :iframe IFrameNode}))
+(defonce nodeTypes #js{"adder" (r/reactify-component AddNode)
+                       "iframe" (r/reactify-component IFrameNode)
+                       "number" (r/reactify-component NumberNode)})
+
+;; (defonce nodeTypes (clj->js {:adder AddNode
+;;                              :iframe IFrameNode}))
 
 (defn ControlPanel
   []
@@ -45,7 +50,7 @@
       :nodeTypes nodeTypes
       :onPaneClick #(dispatch [:hide-context-menu %])
       :onNodeContextMenu (fn [event node]
-                             (dispatch [:show-context-menu (->clj event) (->clj node)]))
+                             (dispatch [:edit-node (.-id node)]))
       :onNodesChange #(dispatch [:change-nodes %])
       :onEdgesChange #(dispatch [:change-edges %])
       :onConnect #(dispatch [:create-edge %])

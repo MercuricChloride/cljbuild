@@ -71,13 +71,33 @@
      (let [nodes (:nodes db)
            new-nodes (map (fn [node]
                             (if (= (.-id node) node-id)
-                              (let [node (->clj node)
-                                    node-data (:data node)]
-                                (->js (assoc node
-                                             :data (->js (assoc node-data
-                                                               property value)))))
+                              (let [node-data (.-data node)]
+                                (set! (.-data node)
+                                      (->js (assoc (->clj node-data)
+                                                   property value)))
+                                node)
                               node))
                           nodes)]
+          {:db (assoc db :nodes (->js new-nodes))})))
+
+(reg-event-fx
+ :update-output-value
+ (fn [{:keys [db]} [_ node-id handle-id value]]
+     (let [nodes (->clj (:nodes db))
+           new-nodes (map (fn [node]
+                            (if (= (:id node) node-id)
+                              (let [assoc-value (assoc-in node
+                                                 [:data :output-map (str handle-id)]
+                                                 value)]
+                                (println "ASSOC VALUE: " assoc-value)
+                                (js/console.log "ASSOC VALUE: " (->js assoc-value))
+                                assoc-value)
+                                ;; (set! (.. node -data -output-map)
+                                ;;       (->js (assoc (->clj output-map)
+                                ;;                    handle-id value)))
+                              node))
+                          nodes)]
+          (js/console.log "NEW-NODES" (->js new-nodes))
           {:db (assoc db :nodes (->js new-nodes))})))
 
 (reg-event-fx

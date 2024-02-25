@@ -22,14 +22,26 @@
    (input :Left id))
   ([pos id]
    (assert (s/valid? ::position pos) "Invalid position")
-   (reagent/as-element
-    [:div.input-handle
-     [handle {:type "target" :position (position pos) :id id}]])))
+   [handle {:type "target"
+            :position (position pos)
+            :id id
+            :className "eth-build-handle"}])
+  ([pos id input-component]
+   (assert (s/valid? ::position pos) "Invalid position")
+   [handle {:type "target"
+            :position (position pos)
+            :id id
+            :className "eth-build-handle"}]))
+
 
 (defn output
   "Creates an output handle for a node"
   ([id]
    (output :Right id))
   ([pos id]
-   (reagent/as-element
-    [:div.output-handle [handle {:type "source" :position (position pos) :id id}]]))) ;; {:type "source" :position (pos position) :id id}
+   (assert (s/valid? ::position pos) "Invalid position")
+   [handle {:type "source"
+            :position (position pos)
+            :id id
+            :className "eth-build-handle"}]))
+  
