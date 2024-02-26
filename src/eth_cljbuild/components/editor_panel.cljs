@@ -16,19 +16,18 @@
                         (if is-object?
                           (reset! text-ref (.parse js/JSON value))
                           (reset! text-ref value))))
-       item-string (str (key->js k))
-       _ (js/console.log "ITEM STRING: " item-string)]
-       ;item-string (str k)]
+       item-string (str (key->js k))]
       [Flex
        {:vertical true
         :width "50%"}
-       [Editor]
-       [TextArea {:onChange handleChange
-                  :cols 80
-                  :rows 10
-                  :defaultValue (if is-object?
-                                    (.stringify js/JSON js-value)
-                                    v)}]
+       (if (= k :cljs)
+         [Editor]
+         [TextArea {:onChange handleChange
+                    :cols 80
+                    :rows 10
+                    :defaultValue (if is-object?
+                                      (.stringify js/JSON js-value)
+                                      v)}])
        [Button {:onClick #(dispatch [:change-property node-id k @text-ref])} (str "Update " item-string)]]))
 
 (defn editor-panel

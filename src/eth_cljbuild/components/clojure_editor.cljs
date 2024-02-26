@@ -61,8 +61,8 @@
         (when-let [el (.-current editor-ref)]
           (init-editor el)))
       #js []) ;; Dependency array, re-run effect if editor-ref changes
-    [:div {:ref editor-ref
-           :style {:height "500px"}}]))
+    [:div {:ref editor-ref}]))
+           
 
 (defn Editor
   []

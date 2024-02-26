@@ -14,7 +14,30 @@
 
 
 (defonce save-key "eth-cljbuild-graph-state")
+(defonce node-types-key "eth-cljbuild-node-types")
 
+(defn get-node-types
+  "Retrieves the node types from local storage if they exist, otherwise returns an empty map"
+  []
+  (if-some [node-types (.getItem js/localStorage node-types-key)]
+    (->clj (.parse js/JSON node-types))
+    {}))
+
+(defn save-node-type
+  "Saves the node's data to local storage"
+  [node-name node-data]
+  (let [node-types (get-node-types)
+        exists? (some? ((keyword node-name) node-types))]
+    (if exists?
+      (js/alert "THIS KEY ALREADY EXISTS! Choose a new name!")
+      (.setItem js/localStorage node-types-key (.stringify js/JSON (->js (assoc node-types node-name node-data)))))))
+
+(reg-event-fx
+ :save-node-type
+ (fn [{:keys [db]} [_ id]]
+   (let [node (find-in #(= (:id %) id) (->clj (:nodes db)))
+         node-name (js/prompt "Enter a name for this node type")]
+     (save-node-type node-name (:data node)))))
 
 ;; EVENTS FOR SAVING AND LOADING GRAPH STATE
 
@@ -117,6 +140,7 @@
      {:db (assoc db :editor-panel {:showing? true
                                    :node-id node-id
                                    :properties properties})})))
+
 
 (reg-event-fx
  :show-context-menu

@@ -18,8 +18,7 @@
   (let [data (->clj data)]
    [BaseNode
     id
-    [:input {:onBlur #(dispatch [:update-output-value id "0" (.. % -target -value)])
-             :initalValue "asdflkj"}]
+    [:input {:onBlur #(dispatch [:update-output-value id "0" (.. % -target -value)])}]
     data]))
 
 (defn sci-eval
@@ -43,6 +42,4 @@
      (dispatch [:update-output-value id "0" sci-output]))
    [BaseNode
     id
-    [:div
-     [Button {:onClick #(dispatch [:change-property id :label "UPDATED"])} "UPDATE"]]
     (->clj data)]))

@@ -13,7 +13,8 @@
     {:gap "small"}
     [Button {:onClick #(dispatch [:remove-node id])} "delete"]
     [Button {:onClick #(dispatch [:copy-node id])} "copy"]
-    [Button {:onClick #(dispatch [:edit-node id])} "edit"]]])
+    [Button {:onClick #(dispatch [:edit-node id])} "edit"]
+    [Button {:onClick #(dispatch [:save-node-type id])} "save node type"]]])
 
 (defn NodeInputs
   [input-count]
