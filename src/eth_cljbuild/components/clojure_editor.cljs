@@ -1,41 +1,52 @@
 (ns eth-cljbuild.components.clojure-editor
   (:require
    ["@codemirror/state" :refer [EditorState]]
-   ["@codemirror/view" :refer [EditorView keymap]]
-   ["@nextjournal/clojure-mode" :refer [complete_keymap default_extensions]]
+   ["@codemirror/view" :refer [EditorView keymap drawSelection]]
+   ["@nextjournal/clojure-mode" :refer [complete_keymap default_extensions syntax]]
+   ["@codemirror/commands" :refer [history historyKeymap]]
+   ["@codemirror/language" :refer [foldGutter syntaxHighlighting defaultHighlightStyle]]
    ["react" :as react]
-   [eth-cljbuild.utils :refer [->js]]))
+   [eth-cljbuild.utils :refer [->js]]
+   [applied-science.js-interop :as j]))
 
-;; (defn- init-editor
-;;   [el]
-;;   (let [extensions (concat [(.of keymap complete_keymap)] default_extensions)
-;;         state (.create EditorState
-;;                        {:doc "Hello world!"
-;;                         :extensions extensions})
-;;         editor (new EditorView {:state state
-;;                                 :parent el
-;;                                 :extensions extensions})]
-;;     (js/console.log "state" state)
-;;     (js/console.log "editor" editor)
-;;     (js/console.log "el" el)))
+(def theme
+  (.theme EditorView
+          (j/lit {".cm-content" {:white-space "pre-wrap"
+                                 :padding "10px 0"
+                                 :flex "1 1 0"}
 
+                  "&.cm-focused" {:outline "0 !important"}
+                  ".cm-line" {:padding "0 9px"
+                              :line-height "1.6"
+                              :font-size "16px"
+                              :font-family "var(--code-font)"}
+                  ".cm-matchingBracket" {:border-bottom "1px solid var(--teal-color)"
+                                         :color "inherit"}
+                  ".cm-gutters" {:background "transparent"
+                                 :border "none"}
+                  ".cm-gutterElement" {:margin-left "5px"}
+                  ;; only show cursor when focused
+                  ".cm-cursor" {:visibility "hidden"}
+                  "&.cm-focused .cm-cursor" {:visibility "visible"}})))
 
-;; (defn Editor
-;;   []
-;;   (let [editor-ref (r/atom nil)]
-;;     [:div
-;;      {:ref #(reset! editor-ref %)}
-;;      (init-editor @editor-ref)]))
+(defonce extensions #js[theme
+                        (history)
+                        (syntaxHighlighting defaultHighlightStyle)
+                        default_extensions
+                        (drawSelection)
+                        (foldGutter)
+                        (.. EditorState -allowMultipleSelections (of true))
+                        (.of keymap historyKeymap)])
+
 
 (defn- init-editor
   [el]
   (when el ;; Ensure the element exists
-    (let [extensions (->js (concat [(.of keymap complete_keymap)] default_extensions))
+    (let [;; extensions (->js (concat [(.of keymap complete_keymap)] default_extensions))
           state  (.create EditorState #js {"doc" "Hello world!"
                                            "extensions" extensions})
-          _ (js/console.log "el" el)
           editor (new EditorView #js {"state" state
-                                      "parent" (->js el)
+                                      "parent" el
                                       "extensions" extensions})]
       (js/console.log "state" state)
       (js/console.log "editor" editor)
@@ -49,7 +60,7 @@
       (fn []
         (when-let [el (.-current editor-ref)]
           (init-editor el)))
-      #js [editor-ref]) ;; Dependency array, re-run effect if editor-ref changes
+      #js []) ;; Dependency array, re-run effect if editor-ref changes
     [:div {:ref editor-ref
            :style {:height "500px"}}]))
 
