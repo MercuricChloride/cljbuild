@@ -23,22 +23,24 @@
     data]))
 
 (defn sci-eval
-  [inputs code]
-  (let [sci-inputs (sci/new-var 'inputs inputs)]
-    (sci/eval-string code {:namespaces {'user {'inputs sci-inputs}}})))
+  [input-count inputs code]
+  (when (= (count inputs) input-count)
+    (println "EVALUATION" (= (count inputs) (int input-count)))
+    (let [sci-inputs (sci/new-var 'inputs inputs)
+          output (sci/eval-string code {:namespaces {'user {'inputs sci-inputs}}})]
+      (js/console.log "OUTPUT: " output)
+      output)))
+      
 
 (defn
   AddNode
   [{:keys [id data]}]
   (let [data (->clj data)
-        {:keys [cljs output-map]} data
+        {:keys [cljs output-map input-count]} data
         input-values @(subscribe [::subs/connections id])
-        sci-output (sci-eval input-values cljs)]
+        sci-output (sci-eval input-count input-values cljs)]
    (when (not= sci-output (:0 output-map))
      (dispatch [:update-output-value id "0" sci-output]))
-   ;;(dispatch [:update-output-value id "0" sci-output])
-   (js/console.log "INPUT VALUES" (->js input-values))
-   (js/console.log "Sci output" sci-output)
    [BaseNode
     id
     [:div

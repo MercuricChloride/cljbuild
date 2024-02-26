@@ -1,6 +1,7 @@
 (ns eth-cljbuild.components.editor-panel
   (:require
    [eth-cljbuild.components.ant-wrappers :refer [Button Collapse Flex TextArea]]
+   [eth-cljbuild.components.clojure-editor :refer [Editor]]
    [eth-cljbuild.utils :refer [->js]]
    [re-frame.core :refer [dispatch]]
    [reagent.core :as r]))
@@ -21,6 +22,7 @@
       [Flex
        {:vertical true
         :width "50%"}
+       [Editor]
        [TextArea {:onChange handleChange
                   :cols 80
                   :rows 10
