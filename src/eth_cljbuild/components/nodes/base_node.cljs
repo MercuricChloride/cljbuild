@@ -1,50 +1,50 @@
 (ns eth-cljbuild.components.nodes.base-node
   (:require
-   [eth-cljbuild.components.ant-wrappers :refer [Button Card Flex]]
+   [eth-cljbuild.components.ant-wrappers :refer [button card flex]]
    [eth-cljbuild.components.flow-wrappers :refer [input node-toolbar output
                                                   resizer]]
    [re-frame.core :refer [dispatch]]
    [reagent.core :as r]))
 
-(defn NodeToolbar
+(defn node-interactions
   [id]
   [node-toolbar
-   [Flex
+   [flex
     {:gap "small"}
-    [Button {:onClick #(dispatch [:remove-node id])} "delete"]
-    [Button {:onClick #(dispatch [:copy-node id])} "copy"]
-    [Button {:onClick #(dispatch [:edit-node id])} "edit"]
-    [Button {:onClick #(dispatch [:save-node-type id])} "save node type"]]])
+    [button {:onClick #(dispatch [:remove-node id])} "delete"]
+    [button {:onClick #(dispatch [:copy-node id])} "copy"]
+    [button {:onClick #(dispatch [:edit-node id])} "edit"]
+    [button {:onClick #(dispatch [:save-node-type id])} "save node type"]]])
 
-(defn NodeInputs
+(defn node-inputs
   [input-count]
-  [Flex
+  [flex
    {:vertical true
     :justify "space-between"}
    (map #(r/as-element [input :Left (str %)]) (range input-count))])
 
-(defn NodeOutputs
+(defn node-outputs
   [output-count]
-  [Flex
+  [flex
    {:vertical true
     :justify "center"
     :align "center"}
    (map #(r/as-element [output :Right (str %)]) (range output-count))])
     
-(defn BaseNode
+(defn base-node
   ([id data]
-   (BaseNode id "" data))
+   (base-node id "" data))
   ([id body {:keys [label input-count output-count]}]
-   [Card
+   [card
     {:style {:borderRadius "5px"}
      :title label}
     [:div
       {:style {:minWidth "150px"}}
-      [NodeToolbar id]
+      [node-interactions id]
       [resizer {:height "500px" :width "500px"}]
-      [Flex
+      [flex
         {:justify "space-between"
           :width "100%"}
-        [NodeInputs input-count]
+        [node-inputs input-count]
         body
-        [NodeOutputs output-count]]]]))
+        [node-outputs output-count]]]]))

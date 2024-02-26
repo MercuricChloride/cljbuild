@@ -1,6 +1,6 @@
 (ns eth-cljbuild.components.editor-panel
   (:require
-   [eth-cljbuild.components.ant-wrappers :refer [Button Collapse Flex TextArea]]
+   [eth-cljbuild.components.ant-wrappers :refer [button collapse flex text-area]]
    [eth-cljbuild.components.clojure-editor :refer [Editor]]
    [eth-cljbuild.utils :refer [->js]]
    [re-frame.core :refer [dispatch]]
@@ -17,25 +17,25 @@
                           (reset! text-ref (.parse js/JSON value))
                           (reset! text-ref value))))
        item-string (str (key->js k))]
-      [Flex
+      [flex
        {:vertical true
         :width "50%"}
        (if (= k :cljs)
          [Editor]
-         [TextArea {:onChange handleChange
-                    :cols 80
-                    :rows 10
-                    :defaultValue (if is-object?
-                                      (.stringify js/JSON js-value)
-                                      v)}])
-       [Button {:onClick #(dispatch [:change-property node-id k @text-ref])} (str "Update " item-string)]]))
+         [text-area {:onChange handleChange
+                     :cols 80
+                     :rows 10
+                     :defaultValue (if is-object?
+                                       (.stringify js/JSON js-value)
+                                       v)}])
+       [button {:onClick #(dispatch [:change-property node-id k @text-ref])} (str "Update " item-string)]]))
 
 (defn editor-panel
  [showing? node-id properties]
  [:div.editor-container
   {:style {:display (if showing? "block" "none")}}
   [:div.editor-header>h1 (str "Editor for node: " node-id)]
-  [Collapse
+  [collapse
    {"items" (map-indexed
              (fn
                [i [key value]]

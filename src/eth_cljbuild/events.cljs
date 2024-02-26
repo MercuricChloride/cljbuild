@@ -5,13 +5,6 @@
    [eth-cljbuild.event-helpers.node-changes :refer [remove-node create-node]]
    [eth-cljbuild.utils :refer [->clj ->js find-in]]
    [re-frame.core :refer [reg-event-db reg-event-fx]]))
-   
-
-(reg-event-db
- ::initialize-db
- (fn [_ _]
-   db/default-db))
-
 
 (defonce save-key "eth-cljbuild-graph-state")
 (defonce node-types-key "eth-cljbuild-node-types")

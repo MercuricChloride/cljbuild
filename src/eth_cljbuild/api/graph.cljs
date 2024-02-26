@@ -1,32 +1,19 @@
-(ns eth-cljbuild.subs
+(ns eth-cljbuild.api.graph
   (:require
    [eth-cljbuild.utils :refer [->clj ->js find-in]]
    [re-frame.core :refer [reg-sub]]))
 
+;; NOTE It's important to note that
+;; the convention in the codebase
+;; is that all items in the db should
+;; be stored as clojure objects, not
+;; as JS or JSON data. It just makes
+;; things simpler
+
 (reg-sub
  ::graph-data
  (fn [db _query-vector]
-  (select-keys db [:nodes :edges])))
-
-(reg-sub
- ::node-data
- (fn [db [_ node-id]]
-   (->clj (get-in db [:nodes node-id]))))
-
-(reg-sub
- ::rf-instance
- (fn [db _]
-  (:rf-instance db)))
-
-(reg-sub
- ::context-menu-state
- (fn [db _]
-   (get-in db [:context-menu])))
-
-(reg-sub
- ::editor-panel-state
- (fn [db _]
-   (get-in db [:editor-panel])))
+  (:graph db)))
 
 (defn incoming?
   [edge node-id]
@@ -65,32 +52,3 @@
                              nodes
                              (.-source %)
                              (.-sourceHandle %)))))))
-          
-
-   
-
-
-;; (reg-sub
-;;  ::input-values
-;;  (fn [_ [_ node-id incoming-edges]]
-;;      (let [input-edges (filter #())])))
-
-;; Should return a map from input-index -> value connected to that port
-;; (reg-sub
-;;  ::input-values
-;;  (fn [{:keys [nodes edges]} [node-id]]
-;;    (let [connections (get-connections edges node-id)
-;;          incoming-edges (-> connections :incoming)
-;;          input-edges (filter #(= (.-target %) node-id) incoming-edges)
-;;          input-values (map (fn [edge]
-;;                              (let [source-node-id (.-source edge)
-;;                                    source-node (get-in nodes [source-node-id :data])]
-;;                                {:index (.-target-port edge)
-;;                                 :value (get-in source-node [:output-map (.-source-port edge)])}))
-;;                            input-edges)]
-;;      input-values)))
-
-(reg-sub
- ::node-types
- (fn [db _query-vector]
-   (select-keys db [:node-types])))

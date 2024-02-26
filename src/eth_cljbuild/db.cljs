@@ -1,4 +1,6 @@
-(ns eth-cljbuild.db)
+(ns eth-cljbuild.db
+  (:require
+   [eth-cljbuild.utils :refer [->clj]]))
 
 (defn -node
   ([label]
@@ -29,7 +31,7 @@
     :type type
     :position {:x x :y y}}))
 
-(defn number-node
+(defn- number-node
   [id x y]
   {:id id
    :data {:label "number"
@@ -39,24 +41,27 @@
    :type "number"
    :position {:x x :y y}})
 
-(defonce nodes [(number-node "1" 0 0)
-                (number-node "2" 0 0)
-                (-node "3" 100 100)])
-                
+(defonce initial-nodes [(number-node "1" 0 0)
+                        (number-node "2" 0 0)
+                        (-node "3" 100 100)])
+(defonce initial-edges [])
 
-(defonce edges [])
+(defonce node-types-key "eth-cljbuild-node-types")
+(defn get-node-types
+  "Retrieves the node types from local storage if they exist, otherwise returns an empty map"
+  []
+  (if-some [node-types (.getItem js/localStorage node-types-key)]
+    (->clj (.parse js/JSON node-types))
+    {}))
 
 (defonce default-db
-  {:user-settings {:theme "light"
-                   :grid-style "lines"}
-   :nodes nodes
-   :edges edges
-   :rf-instance {} ;; the current react-flow-instance
-   :editor-panel {:showing? false
-                  :node-id 0
-                  :properties []}
-   :context-menu {:showing? false
-                  :node-id 0
-                  :x 0
-                  :y 0
-                  :properties []}})
+  {:settings {:visual {:theme "light"
+                       :grid-style "lines"
+                       :grid-color "#000000"}}
+   :graph {:nodes initial-nodes
+           :edges initial-edges}
+   :globals {:rf-instance {}
+             :node-types {}}
+   :menus {:node-editor {:showing? false
+                         :node-id 0
+                         :properties []}}})

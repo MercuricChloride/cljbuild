@@ -4,7 +4,8 @@
    [re-frame.core :as re-frame]
    [eth-cljbuild.events :as events]
    [eth-cljbuild.views :as views]
-   [eth-cljbuild.config :as config]))
+   [eth-cljbuild.config :as config]
+   [eth-cljbuild.api.common :as common]))
    
 
 
@@ -19,6 +20,6 @@
     (rdom/render [views/main-panel] root-el)))
 
 (defn init []
-  (re-frame/dispatch-sync [::events/initialize-db])
+  (re-frame/dispatch-sync [::common/initialize-db])
   (dev-setup)
   (mount-root))
