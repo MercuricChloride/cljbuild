@@ -4,6 +4,7 @@
    [eth-cljbuild.components.flow-wrappers :refer [input node-toolbar output
                                                   resizer]]
    [re-frame.core :refer [dispatch]]
+   [eth-cljbuild.api.graph :as graph]
    [reagent.core :as r]))
 
 (defn node-interactions
@@ -13,7 +14,7 @@
     {:gap "small"}
     [button {:onClick #(dispatch [:remove-node id])} "delete"]
     [button {:onClick #(dispatch [:copy-node id])} "copy"]
-    [button {:onClick #(dispatch [:edit-node id])} "edit"]
+    [button {:onClick #(dispatch [::graph/open-node-editor id])} "edit"]
     [button {:onClick #(dispatch [:save-node-type id])} "save node type"]]])
 
 (defn node-inputs

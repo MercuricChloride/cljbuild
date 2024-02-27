@@ -6,6 +6,11 @@
   [pred coll]
   (first (filter pred coll)))
 
+(defn find-node
+  "Returns the node with the given id"
+  [nodes id]
+  (find-in #(= (:id %) id) nodes))
+
 (defn ->clj
   "Converts a JavaScript object to a Clojure map"
   [js-obj]

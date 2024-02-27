@@ -27,12 +27,12 @@
      {:nodes nodes
       :edges edges
       :nodeTypes node-types
-      :onPaneClick #(dispatch [:hide-context-menu %])
+      :onPaneClick #(dispatch [::graph/close-node-editor %])
       :onNodeContextMenu (fn [event node]
                              (dispatch [:edit-node (.-id node)]))
       :onNodesChange #(dispatch [::graph/js-node-changes %])
-      :onEdgesChange #(dispatch [:change-edges %])
-      :onConnect #(dispatch [:create-edge %])
+      :onEdgesChange #(dispatch [::graph/js-edge-changes %])
+      :onConnect #(dispatch [::graph/create-edge %])
       :onContextMenu (fn [e] (.preventDefault e))
       :onInit #(dispatch [:set-rf-instance %])}
      [background

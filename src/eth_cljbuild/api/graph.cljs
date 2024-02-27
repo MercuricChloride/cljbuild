@@ -1,7 +1,7 @@
 (ns eth-cljbuild.api.graph
   (:require
    ["reactflow" :refer [addEdge applyEdgeChanges applyNodeChanges]]
-   [eth-cljbuild.utils :refer [->clj ->js find-in]]
+   [eth-cljbuild.utils :refer [->clj ->js find-in find-node]]
    [re-frame.core :refer [reg-event-db reg-sub]]))
 
 ;; NOTE It's important to note that
@@ -44,6 +44,11 @@
         output-map (get-in node [:data :output-map (keyword handle-id)])]
     output-map))
 
+(defn node-properties
+  "Returns a clj coll of properties of a node"
+  [node]
+  (map str (keys (:data node))))
+
 
 ;; ============================
 ;; SUBS
@@ -84,3 +89,33 @@
      (let [js-nodes (->js (get-in db [:graph :nodes]))
            new-nodes (applyNodeChanges js-node-changes js-nodes)]
        (assoc-in db [:graph :nodes] (->clj new-nodes)))))
+
+(reg-event-db
+ ::js-edge-changes
+ (fn [db [_ js-edge-changes]]
+     (let [js-edges (->js (get-in db [:graph :edges]))
+           new-edges (applyEdgeChanges js-edge-changes js-edges)]
+       (assoc-in db [:graph :edges] (->clj new-edges)))))
+
+(reg-event-db
+ ::create-edge
+ (fn [db [_ js-edge]]
+   (update-in db
+              [:graph :edges]
+              #(->clj (addEdge js-edge (->js %))))))
+
+(reg-event-db
+ ::open-node-editor
+ (fn [db [_ node-id]]
+   (let [node (find-node (:nodes db) node-id)
+         properties (node-properties node)]
+     (update-in db
+                [:menus :node-editor]
+                #(assoc % :showing? true
+                          :node-id node-id
+                          :properties properties)))))
+
+(reg-event-db
+ ::close-node-editor
+ (fn [db _]
+   (update-in db [:menus :node-editor] #(assoc % :showing? false))))
