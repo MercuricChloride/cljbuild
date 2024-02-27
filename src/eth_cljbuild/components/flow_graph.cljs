@@ -21,7 +21,7 @@
 
 (defn flow-component
   []
-  (let [{:keys [nodes edges graph-state]} @(subscribe [::graph/graph-data])
+  (let [{:keys [nodes edges]} @(subscribe [::graph/js-graph-data])
         {:keys [theme grid-style grid-color]} @(subscribe [::settings/theme])]
     [react-flow
      {:nodes nodes
@@ -30,7 +30,7 @@
       :onPaneClick #(dispatch [:hide-context-menu %])
       :onNodeContextMenu (fn [event node]
                              (dispatch [:edit-node (.-id node)]))
-      :onNodesChange #(dispatch [:change-nodes %])
+      :onNodesChange #(dispatch [::graph/js-node-changes %])
       :onEdgesChange #(dispatch [:change-edges %])
       :onConnect #(dispatch [:create-edge %])
       :onContextMenu (fn [e] (.preventDefault e))

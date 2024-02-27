@@ -54,7 +54,6 @@
         {:db (assoc db :nodes nodes :edges edges)})))
 
 ;; EVENTS FOR CREATING AND MANAGING NODES AND THEIR PROPERTIES
-
 (defn delete-node
   [nodes node-id]
   (->js (filter (fn [node]
