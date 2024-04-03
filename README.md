@@ -1,222 +1,147 @@
-# eth-cljbuild
+# Table of Contents
 
-A [re-frame](https://github.com/day8/re-frame) application designed to ... well, that part is up to
-you.
-
-## Getting Started
-
-### Project Overview
-
-* Architecture:
-[Single Page Application (SPA)](https://en.wikipedia.org/wiki/Single-page_application)
-* Languages
-  - Front end is [ClojureScript](https://clojurescript.org/) with ([re-frame](https://github.com/day8/re-frame))
-* Dependencies
-  - UI framework: [re-frame](https://github.com/day8/re-frame)
-  ([docs](https://github.com/day8/re-frame/blob/master/docs/README.md),
-  [FAQs](https://github.com/day8/re-frame/blob/master/docs/FAQs/README.md)) ->
-  [Reagent](https://github.com/reagent-project/reagent) ->
-  [React](https://github.com/facebook/react)
-* Build tools
-  - CLJS compilation, dependency management, REPL, & hot reload: [`shadow-cljs`](https://github.com/thheller/shadow-cljs)
-* Development tools
-  - Debugging: [CLJS DevTools](https://github.com/binaryage/cljs-devtools)
-  - Emacs integration: [CIDER](https://github.com/clojure-emacs/cider)
-  - Linter: [clj-kondo](https://github.com/borkdude/clj-kondo)
-
-#### Directory structure
-
-* [`/`](/../../): project config files
-* [`.clj-kondo/`](.clj-kondo/): lint config and cache files (cache files are not tracked; see
-[`.gitignore`](.gitignore))
-* [`dev/`](dev/): source files compiled only with the [dev](#running-the-app) profile
-  - [`user.cljs`](dev/cljs/user.cljs): symbols for use during development in the
-[ClojureScript REPL](#connecting-to-the-browser-repl-from-a-terminal)
-* [`resources/public/`](resources/public/): SPA root directory;
-[dev](#running-the-app) / [prod](#production) profile depends on the most recent build
-  - [`index.html`](resources/public/index.html): SPA home page
-    - Dynamic SPA content rendered in the following `div`:
-        ```html
-        <div id="app"></div>
-        ```
-    - Customizable; add headers, footers, links to other scripts and styles, etc.
-  - Generated directories and files
-    - Created on build with either the [dev](#running-the-app) or [prod](#production) profile
-    - `js/compiled/`: compiled CLJS (`shadow-cljs`)
-      - Not tracked in source control; see [`.gitignore`](.gitignore)
-* [`src/eth_cljbuild/`](src/eth_cljbuild/): SPA source files (ClojureScript,
-[re-frame](https://github.com/Day8/re-frame))
-  - [`core.cljs`](src/eth_cljbuild/core.cljs): contains the SPA entry point, `init`
-* [`.github/workflows/`](.github/workflows/): contains the
-[github actions](https://github.com/features/actions) pipelines.
-  - [`test.yaml`](.github/workflows/test.yaml): Pipeline for testing.
+1.  [Eth CLJ Build λ](#org4b711f6)
+2.  [TLDR / FAQ](#org5f6c452)
+    1.  [What is this?](#org3c7eb3c)
+    2.  [Why did you build this?](#org935d334)
+    3.  [Why is it interesting?](#orgd6067f5)
+    4.  [Why should this exist?](#orgf0a319e)
+    5.  [How can this fit into my development process?](#org2eccaf8)
+3.  [So what exactly did I build](#orgb7e36b5)
+    1.  [You know about eth.build but don&rsquo;t know lisp](#org68b4f48)
+        1.  [What is a cell?](#orgd537525)
 
 
-### Editor/IDE
 
-Use your preferred editor or IDE that supports Clojure/ClojureScript development. See
-[Clojure tools](https://clojure.org/community/resources#_clojure_tools) for some popular options.
+<a id="org4b711f6"></a>
 
-### Environment Setup
+# Eth CLJ Build λ
 
-1. Install [JDK 8 or later](https://openjdk.java.net/install/) (Java Development Kit)
-2. Install [Node.js](https://nodejs.org/) (JavaScript runtime environment) which should include
-   [NPM](https://docs.npmjs.com/cli/npm) or if your Node.js installation does not include NPM also install it.
-4. Install [clj-kondo](https://github.com/borkdude/clj-kondo/blob/master/doc/install.md) (linter)
-5. Clone this repo and open a terminal in the `eth-cljbuild` project root directory
-6. (Optional) Setup [lint cache](https://github.com/borkdude/clj-kondo#project-setup):
-    ```sh
-    clj-kondo --lint "$(npx shadow-cljs classpath)"
-    ```
-7. Setup
-[linting in your editor](https://github.com/borkdude/clj-kondo/blob/master/doc/editor-integration.md)
+A reflective, interactive playground for learning hard concepts in an intuitive way.
 
-### Browser Setup
+This project is pretty experimental and as such is subject to change.
 
-Browser caching should be disabled when developer tools are open to prevent interference with
-[`shadow-cljs`](https://github.com/thheller/shadow-cljs) hot reloading.
-
-Custom formatters must be enabled in the browser before
-[CLJS DevTools](https://github.com/binaryage/cljs-devtools) can display ClojureScript data in the
-console in a more readable way.
-
-#### Chrome/Chromium
-
-1. Open [DevTools](https://developers.google.com/web/tools/chrome-devtools/) (Linux/Windows: `F12`
-or `Ctrl-Shift-I`; macOS: `⌘-Option-I`)
-2. Open DevTools Settings (Linux/Windows: `?` or `F1`; macOS: `?` or `Fn+F1`)
-3. Select `Preferences` in the navigation menu on the left, if it is not already selected
-4. Under the `Network` heading, enable the `Disable cache (while DevTools is open)` option
-5. Under the `Console` heading, enable the `Enable custom formatters` option
-
-#### Firefox
-
-1. Open [Developer Tools](https://developer.mozilla.org/en-US/docs/Tools) (Linux/Windows: `F12` or
-`Ctrl-Shift-I`; macOS: `⌘-Option-I`)
-2. Open [Developer Tools Settings](https://developer.mozilla.org/en-US/docs/Tools/Settings)
-(Linux/macOS/Windows: `F1`)
-3. Under the `Advanced settings` heading, enable the `Disable HTTP Cache (when toolbox is open)`
-option
-
-Unfortunately, Firefox does not yet support custom formatters in their devtools. For updates, follow
-the enhancement request in their bug tracker:
-[1262914 - Add support for Custom Formatters in devtools](https://bugzilla.mozilla.org/show_bug.cgi?id=1262914).
-
-## Development
-
-### Running the App
-
-Start a temporary local web server, build the app with the `dev` profile, and serve the app,
-browser test runner and karma test runner with hot reload:
-
-```sh
-npm install
-npx shadow-cljs watch app
-```
-
-Please be patient; it may take over 20 seconds to see any output, and over 40 seconds to complete.
-
-When `[:app] Build completed` appears in the output, browse to
-[http://localhost:8280/](http://localhost:8280/).
-
-[`shadow-cljs`](https://github.com/thheller/shadow-cljs) will automatically push ClojureScript code
-changes to your browser on save. To prevent a few common issues, see
-[Hot Reload in ClojureScript: Things to avoid](https://code.thheller.com/blog/shadow-cljs/2019/08/25/hot-reload-in-clojurescript.html#things-to-avoid).
-
-Opening the app in your browser starts a
-[ClojureScript browser REPL](https://clojurescript.org/reference/repl#using-the-browser-as-an-evaluation-environment),
-to which you may now connect.
-
-#### Connecting to the browser REPL from Emacs with CIDER
-
-Connect to the browser REPL:
-```
-M-x cider-jack-in-cljs
-```
-
-See
-[Shadow CLJS User's Guide: Emacs/CIDER](https://shadow-cljs.github.io/docs/UsersGuide.html#cider)
-for more information. Note that the mentioned [`.dir-locals.el`](.dir-locals.el) file has already
-been created for you.
-
-#### Connecting to the browser REPL from VS Code with Calva
-
-See the [re-frame-template README](https://github.com/day8/re-frame-template) for [Calva](https://github.com/BetterThanTomorrow/calva) instuctions. See also https://calva.io for Calva documentation.
+This README also isn&rsquo;t finished, but in the sake of shipping I am just yoloing it out in it&rsquo;s ugly state.
+But if you are the target audience right now, you should be able to understand what the concepts are and why it is interesting.
 
 
-#### Connecting to the browser REPL from other editors
+<a id="org5f6c452"></a>
 
-See
-[Shadow CLJS User's Guide: Editor Integration](https://shadow-cljs.github.io/docs/UsersGuide.html#_editor_integration).
-Note that `npm run watch` runs `npx shadow-cljs watch` for you, and that this project's running build ids is
-`app`, `browser-test`, `karma-test`, or the keywords `:app`, `:browser-test`, `:karma-test` in a Clojure context.
+# TLDR / FAQ
 
-Alternatively, search the web for info on connecting to a `shadow-cljs` ClojureScript browser REPL
-from your editor and configuration.
 
-For example, in Vim / Neovim with `fireplace.vim`
-1. Open a `.cljs` file in the project to activate `fireplace.vim`
-2. In normal mode, execute the `Piggieback` command with this project's running build id, `:app`:
-    ```vim
-    :Piggieback :app
-    ```
+<a id="org3c7eb3c"></a>
 
-#### Connecting to the browser REPL from a terminal
+## What is this?
 
-1. Connect to the `shadow-cljs` nREPL:
-    ```sh
-    lein repl :connect localhost:8777
-    ```
-    The REPL prompt, `shadow.user=>`, indicates that is a Clojure REPL, not ClojureScript.
+I built a visual programming environment, that was intentionally designed for the end users to hack on, to fit their needs. Think something like video games that allow modding.
 
-2. In the REPL, switch the session to this project's running build id, `:app`:
-    ```clj
-    (shadow.cljs.devtools.api/nrepl-select :app)
-    ```
-    The REPL prompt changes to `cljs.user=>`, indicating that this is now a ClojureScript REPL.
-3. See [`user.cljs`](dev/cljs/user.cljs) for symbols that are immediately accessible in the REPL
-without needing to `require`.
 
-### Running `shadow-cljs` Actions
+<a id="org935d334"></a>
 
-See a list of [`shadow-cljs CLI`](https://shadow-cljs.github.io/docs/UsersGuide.html#_command_line)
-actions:
-```sh
-npx shadow-cljs --help
-```
+## Why did you build this?
 
-Please be patient; it may take over 10 seconds to see any output. Also note that some actions shown
-may not actually be supported, outputting "Unknown action." when run.
+I built this to provide a way to allow people to build playgrounds that can explain difficult concepts, in a way that allows for visual representations, and allows the user to experiment and play with the concept to better understand it.
 
-Run a shadow-cljs action on this project's build id (without the colon, just `app`):
-```sh
-npx shadow-cljs <action> app
-```
-### Debug Logging
 
-The `debug?` variable in [`config.cljs`](src/cljs/eth_cljbuild/config.cljs) defaults to `true` in
-[`dev`](#running-the-app) builds, and `false` in [`prod`](#production) builds.
+<a id="orgd6067f5"></a>
 
-Use `debug?` for logging or other tasks that should run only on `dev` builds:
+## Why is it interesting?
 
-```clj
-(ns eth-cljbuild.example
-  (:require [eth-cljbuild.config :as config])
+It is interesting because I haven&rsquo;t seen an educational tool be built in a way like this, that allows end user customization to the nth degree.
 
-(when config/debug?
-  (println "This message will appear in the browser console only on dev builds."))
-```
 
-## Production
+<a id="orgf0a319e"></a>
 
-Build the app with the `prod` profile:
+## Why should this exist?
 
-```sh
-npm install
-npm run release
-```
+Crypto has a lot of non intuitive topics that need to be deeply understood by people. Tools such as eth.build are perfect for exploring the introductory concepts such as private keys and hash functions. But tools like this fail when trying to build a demo of more complicated topics the creator didn&rsquo;t intend on demoing.
 
-Please be patient; it may take over 15 seconds to see any output, and over 30 seconds to complete.
 
-The `resources/public/js/compiled` directory is created, containing the compiled `app.js` and
-`manifest.edn` files.
+<a id="org2eccaf8"></a>
+
+## How can this fit into my development process?
+
+The most obvious way I see this fitting into the development process, is as a tool to quickly build interactive prototypes for ideas, or as a way of building simple interfaces for existing projects.
+
+
+<a id="orgb7e36b5"></a>
+
+# So what exactly did I build
+
+This question is best answered with some context, so I will provide a few answers based on where you are coming from
+
+
+<a id="org68b4f48"></a>
+
+## You know about eth.build but don&rsquo;t know lisp
+
+Fundementally, everything works the same as in eth.build.
+
+You have nodes, they do things, they can send data to other nodes when you connect them.
+
+Cool!
+
+But the really exciting difference is present in the actual implementation of the nodes. Unlike eth.build, where each node is written as literal js code, and shipped as part of the application. There is only a single type of node in clj build!
+
+And this type of node is called a **cell**!
+
+Let&rsquo;s break this down and explain why this is so cool
+
+
+<a id="orgd537525"></a>
+
+### What is a cell?
+
+The name means roughly the same as it does in biology, where it is a term for a generic &ldquo;thing&rdquo;, that can be programmed via DNA to fill a more specialized purpose.
+
+In this app, all things follow this same principle.
+
+Each node is capable of executing arbitrary code in a little sandbox, where the code is written in an extremely simple language called Clojure λ.
+
+What this means, is that adding a new feature into clj build is as simple as:
+
+1.  Creating a new cell
+2.  Modifying it&rsquo;s code
+3.  Immediately start playing with your new cell!
+
+Because the only difference between any two nodes is the internal code, it unlocks a few really cool things:
+
+1.  Sharing &ldquo;packages&rdquo; of cells becomes extremely easy.
+2.  If you want to modify how a cell operates or add a feature to a cell, you can just directly break it open, change it&rsquo;s code, then continue hacking! Now that&rsquo;s extensible!
+
+1.  BUT WAIT THERE&rsquo;S MORE! (cells with custom interfaces)
+
+    The clojure ecosystem loves something called &ldquo;hiccup&rdquo;, which is a particular data format extremely similar to HTML or XML.
+    
+    It is just a simple way to represent a tree, in data. And because it&rsquo;s simply data, a cell can include functionality that outputs a hiccup data format. And what this means, is that a cell can describe how to display it&rsquo;s own interface!
+    
+    But before I give an example of this, let&rsquo;s compare html and hiccup really quickly.
+    
+    To write a simple list in html, we can do this:
+    
+        <ul>
+            <li>Hello</li>
+            <li>World!</li>
+        </ul>
+    
+    So this corresponds to a unordered list node, which contains 2 children, the list item nodes, which each contain children of text.
+    
+    To represent the same thing in hiccup we can do this:
+    
+        [:ul
+          [:li "Hello"]
+          [:li "World!"]]
+    
+    This is the exact same thing, where we have a unordered list, which contains two children, which each contain some text as their children.
+
+2.  But I want javascript package XYZ?!?
+
+    Good news nerd! You can have that!
+    
+    The way cells operate under the hood, is something called &ldquo;sci&rdquo;. Which is a &ldquo;small clojure interpreter&rdquo;.
+    
+    And because this is running in javascript, you can have full interop with any javascript package you could need. All it takes is simply injecting it into sci!
+    
+    The way you interact with the library might take a bit of getting used to, but it is really easy.
+
